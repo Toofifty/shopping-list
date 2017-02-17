@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    .ui.three.item.labeled.icon.menu.top.attached
+    .ui.three.item.labeled.icon.menu.bottom.fixed
       a.item.active(data-tab='shop')
         i.shopping.basket.icon
         | Shopping List
@@ -10,8 +10,8 @@
       a.item(data-tab='settings')
         i.setting.icon
         | Settings
-    shopping-list.active(data-tab='shop', :item-list='items')
-    .ui.tab.segment.bottom.attached(data-tab='note')
+    shopping-list.active(data-tab='shop', :db='db')
+    .ui.tab.top.attached(data-tab='note')
       p Cats
       p Aren't
       p Cool
@@ -19,6 +19,51 @@
 
 <script>
 import ShoppingList from './components/ShoppingList.vue'
+import firebase from 'firebase'
+
+const fb_app = firebase.initializeApp({
+    apiKey: "AIzaSyCe18jPwJLMI5TPhHy8CnkvdduB4vh1AWw",
+    authDomain: "shopping-list-7217b.firebaseapp.com",
+    databaseURL: "https://shopping-list-7217b.firebaseio.com",
+    storageBucket: "shopping-list-7217b.appspot.com",
+    messagingSenderId: "316745592013"
+  })
+
+
+const db = fb_app.database()
+
+const db_items = db.ref('items/')
+
+const k = db_items.push().key
+const k2 = db_items.push().key
+
+let data = {}
+data[k] = {
+  label: k.substr(0, 10),
+  done: false,
+  desc: "",
+  date: "18/02",
+  deleted: false,
+  by: {
+    name: "Matho",
+    color: "1"
+  }
+}
+data[k2] = {
+  label: k2.substr(0, 10),
+  done: false,
+  desc: "",
+  date: "18/02",
+  deleted: false,
+  by: {
+    name: "Sam",
+    color: "5"
+  }
+}
+
+db_items.update(data)
+
+// console.log(k)
 
 export default {
   name: 'app',
@@ -30,16 +75,7 @@ export default {
   },
   data () {
     return {
-      items: [
-        {
-          label: "bread",
-          id: 1
-        },
-        {
-          label: "butter",
-          id: 2
-        }
-      ]
+      db: db
     }
   }
 }
@@ -52,6 +88,10 @@ export default {
 $aoi: #69D2E7;
 $pondwater: #A7DBD8;
 $goldfish: #F38630;
+
+body {
+  background: #556270 !important;
+}
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
