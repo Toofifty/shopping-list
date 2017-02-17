@@ -47,6 +47,8 @@ export default {
 
 <style lang="scss">
 
+// palette http://www.colourlovers.com/palette/1930/cheer_up_emo_kid
+
 $aoi: #69D2E7;
 $pondwater: #A7DBD8;
 $goldfish: #F38630;
