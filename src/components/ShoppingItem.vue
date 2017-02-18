@@ -49,7 +49,6 @@ export default {
 
     let dragMove = (e) => {
       let xdiff = e.pageX || e.offsetX || e.originalEvent.targetTouches[0].clientX
-      console.log(xdiff)
       let dist = xdiff - xval
       if (dist < 15 && dist > -15) return
       vm.dragging = true
@@ -159,7 +158,6 @@ export default {
       this.item.deleted = true
       this.db.ref('items/' + this.id).update(this.item)
       $('#item-card-' + this.id).addClass('deleted')
-      console.log('set DELETED of ' + this.id)
       setTimeout(() => {
         // this.db.ref('items/' + this.id).remove()
         this.deleteLock.locked = false
