@@ -7,7 +7,7 @@
     .card
       .main
         h1(:class="item.desc ? 'full-height' : ''") {{ item.label }}
-        p.short {{ getShortDesc() }}
+        p.short {{ get_short_desc() }}
         p.long {{ item.desc }}
 </template>
 
@@ -29,91 +29,117 @@ export default {
     }
   },
   mounted () {
-    if (this.item.deleted) {
+    if (this.item && this.item.deleted) {
+      // Clear items from the database if they are
+      // marked to be deleted. Prevents weird visual
+      // errors when removing items as soon as
+      // they're deleted
       this.db.ref('items/' + this.id).remove()
+      console.log('pushing dead item ' + this.id)
+
+      // No use initializing a deleted item.
       return
     }
 
-    let $card = $('#item-card-' + this.id + ' .card')
-    let $lo = $('#item-card-' + this.id + ' .option.left')
-    let $ro = $('#item-card-' + this.id + ' .option.right')
-    let xval = 0
-    let vm = this
+    console.log('initializing item ' + this.id)
 
-    let beginDrag = (e) => {
+    this.$container  = $('#item-card-' + this.id)
+    this.$card       = this.$container.children('.card')
+    this.$card_main  = this.$card.children('.main')
+    this.$opt_left   = this.$container.children('.option.left')
+    this.$opt_right  = this.$container.children('.option.right')
+
+    let xval = 0
+
+    let begin_drag = (e) => {
       xval = e.pageX || e.offsetX || e.originalEvent.targetTouches[0].clientX
-      $card.css('transition', '0s')
-      $lo.css('transition', '0s')
-      $ro.css('transition', '0s')
+      // Disable transitions so drag is responsive
+      this.$card.css('transition', '0s')
+      this.$opt_left.css('transition', '0s')
+      this.$opt_right.css('transition', '0s')
     }
 
-    let dragMove = (e) => {
+    let while_drag = (e) => {
       let xdiff = e.pageX || e.offsetX || e.originalEvent.targetTouches[0].clientX
       let dist = xdiff - xval
+
+      // Ignore clicks or taps where the user
+      // didn't mean to drag the card
       if (dist < 15 && dist > -15) return
-      vm.dragging = true
+
+      // Don't allow right swipes if the item
+      // is already done
+      if (dist > 0 && this.item.done) return
+
+      this.dragging = true
       if (dist > 200 || xdiff > ($(window).width() - 5)) {
         dist = 200
-        vm.markDone()
-        endDrag()
+        this.done()
+        end_drag()
+        return
       } else if (dist < -200 || xdiff < 5) {
         dist = -200
-        vm.markTrashed()
-        endDrag()
-      }
-      $card.css('margin-left', dist + 'px')
-      if (dist > 0) {
-        $lo.css('width', (100 + dist / 2) + 'px')
-      } else {
-        $ro.css('width', (100 + -dist / 2) + 'px')
+        this.trash()
       }
 
-      if (vm.item.done && dist > 0) {
-        endDrag()
+      this.$card.css('margin-left', dist + 'px')
+
+      if (dist > 0) {
+        this.$opt_left.css('width', (100 + dist / 2) + 'px')
+        this.$card.css('margin-left', dist + 'px')
+      } else {
+        if (this.item.done) {
+          this.$opt_left.css('left', dist + 'px')
+        } else {
+            this.$card.css('margin-left', dist + 'px')
+        }
+        this.$opt_right.css('width', (100 + -dist / 2) + 'px')
       }
     }
 
-    let endDrag = () => {
-      $card.off('mousemove touchmove')
-        .css('transition', '0.5s')
-        .css('margin-left', this.item.done ? '80px' : '0px')
+    let end_drag = () => {
+      $(document).off('mousemove touchmove')
 
-      $lo.css('transition', '0.5s')
+      this.$card.css('transition', '0.5s')
+        .css('margin-left', '0px')
+
+      this.$opt_left.css('transition', '0.5s')
         .css('width', '100px')
+        .css('left', '0px')
 
-      $ro.css('transition', '0.5s')
+      this.$opt_right.css('transition', '0.5s')
         .css('width', '100px')
       xval = 0
       setTimeout(() => {
-        vm.dragging = false
+        this.dragging = false
       }, 10)
     }
 
-    $card.on('mousedown touchstart', (e) => {
-      if (vm.expanded) return
-      beginDrag(e)
-      $card.on('mousemove touchmove', dragMove)
-        .on('mouseup touchend', endDrag)
+    this.$card.on('mousedown touchstart', (e) => {
+      if (this.expanded) return
+      begin_drag(e)
+      $(document).on('mousemove touchmove', while_drag)
+      $(document).on('mouseup touchend', end_drag)
     })
 
-    let $container = $('#item-card-' + vm.id)
-    $container.addClass('preanim')
-      .css('border-bottom-color', colors[vm.item.by.color])
+    this.$container.addClass('preanim')
+
+    console.log(this.$container.length)
 
     setTimeout(() => {
-      $container.removeClass('preanim')
-        .css('border-bottom-color', colors[vm.item.by.color])
+      this.$container.removeClass('preanim')
+        .css('border-bottom-color', colors[this.item.by.color])
     }, 200)
 
-    $container.on('click tap', (e) => {
-      if (vm.dragging) return
-      if (vm.expanded) {
-        $container.removeClass('tall')
-        vm.expanded = false
+    this.$container.on('click tap', (e) => {
+      if (this.dragging) return
+      if (this.expanded) {
+        this.$container.removeClass('tall')
+        this.expanded = false
       } else {
-        if (vm.hasLongDesc()) {
-          $container.addClass('tall')
-          vm.expanded = true
+        if (this.has_long_desc()) {
+          this.$container.addClass('tall')
+          this.expanded = true
         }
       }
     })
@@ -129,35 +155,33 @@ export default {
     }
   },
   methods: {
-    hasLongDesc () {
+    has_long_desc () {
       return this.item.desc && this.item.desc.length > 35
     },
-    getShortDesc () {
+    get_short_desc () {
       if (this.expanded)
         return this.item.desc
       if (this.item.desc === '')
         return ''
-      if (this.hasLongDesc())
+      if (this.has_long_desc())
         return this.item.desc.substr(0, 35) + '...'
       return this.item.desc
     },
-    markDone () {
+    done () {
       console.log('done!')
       this.item.done = true
-      $('#item-card-' + this.id)
-        .addClass('done')
-        .children('.left.option')
-        .css('transition', '0.5s')
+      this.$container.addClass('done')
+      this.$opt_left.css('transition', '0.5s')
       this.db.ref('items/' + this.id).update(this.item)
     },
-    markTrashed () {
+    trash () {
       if (this.deleteLock.locked || this.item.deleted) return
       this.deleteLock.locked = true
       console.log('trashed!')
       this.item.done = false
       this.item.deleted = true
       this.db.ref('items/' + this.id).update(this.item)
-      $('#item-card-' + this.id).addClass('deleted')
+      this.$container.addClass('deleted')
       setTimeout(() => {
         // this.db.ref('items/' + this.id).remove()
         this.deleteLock.locked = false
@@ -205,7 +229,7 @@ $tabshadow: inset 0 -8px 0 rgba(0, 0, 0, 0.1);
   }
 
   &.tall {
-    height: 15em;
+    height: 10em;
 
     .card {
       p.short {
@@ -234,9 +258,13 @@ $tabshadow: inset 0 -8px 0 rgba(0, 0, 0, 0.1);
     padding: 1em;
     transition: 1s;
 
+    .main {
+      transition: 0.5s;
+    }
+
     h1 {
       text-align: left;
-      text-transform: uppercase;
+      text-transform: lowercase;
       margin-bottom: 0;
       vertical-align: middle;
     }
@@ -279,19 +307,23 @@ $tabshadow: inset 0 -8px 0 rgba(0, 0, 0, 0.1);
       box-shadow: $tabshadow;
       right: 0;
     }
+
+    i {
+      text-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+    }
   }
 
   &.done {
     .card {
       background: #EEE;
-      text-decoration: line-through;
       color: #CCC;
       h1, p {
+        text-decoration: line-through;
         color: white;
       }
 
-      .meta {
-        opacity: 0;
+      .main {
+        margin-left: 80px;
       }
     }
 

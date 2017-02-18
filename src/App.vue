@@ -21,49 +21,48 @@
 import ShoppingList from './components/ShoppingList.vue'
 import firebase from 'firebase'
 
+// Initialize the Firebase connection
 const fb_app = firebase.initializeApp({
-    apiKey: "AIzaSyCe18jPwJLMI5TPhHy8CnkvdduB4vh1AWw",
-    authDomain: "shopping-list-7217b.firebaseapp.com",
-    databaseURL: "https://shopping-list-7217b.firebaseio.com",
-    storageBucket: "shopping-list-7217b.appspot.com",
-    messagingSenderId: "316745592013"
-  })
+  apiKey: "AIzaSyCe18jPwJLMI5TPhHy8CnkvdduB4vh1AWw",
+  authDomain: "shopping-list-7217b.firebaseapp.com",
+  databaseURL: "https://shopping-list-7217b.firebaseio.com",
+  storageBucket: "shopping-list-7217b.appspot.com",
+  messagingSenderId: "316745592013"
+})
 
-
+// Grab the database reference from Firebase
 const db = fb_app.database()
-
-const db_items = db.ref('items/')
-
-const k = db_items.push().key
-const k2 = db_items.push().key
-
-let data = {}
-data[k] = {
-  label: k.substr(0, 10),
-  done: false,
-  desc: "",
-  date: "18/02",
-  deleted: false,
-  by: {
-    name: "Matho",
-    color: "1"
-  }
-}
-data[k2] = {
-  label: k2.substr(0, 10),
-  done: false,
-  desc: "",
-  date: "18/02",
-  deleted: false,
-  by: {
-    name: "Sam",
-    color: "5"
-  }
-}
-
-db_items.update(data)
-
-// console.log(k)
+//
+// const db_items = db.ref('items/')
+//
+// const k = db_items.push().key
+// const k2 = db_items.push().key
+//
+// let data = {}
+// data[k] = {
+//   label: k.substr(0, 10),
+//   done: false,
+//   desc: "",
+//   date: "18/02",
+//   deleted: false,
+//   by: {
+//     name: "Matho",
+//     color: "1"
+//   }
+// }
+// data[k2] = {
+//   label: k2.substr(0, 10),
+//   done: false,
+//   desc: "",
+//   date: "18/02",
+//   deleted: false,
+//   by: {
+//     name: "Sam",
+//     color: "5"
+//   }
+// }
+//
+// db_items.update(data)
 
 export default {
   name: 'app',
