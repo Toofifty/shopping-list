@@ -8,7 +8,7 @@
           input(type='text', name='label', placeholder='"Bread"')
         .field
           label Description
-          textarea(name='desc', placeholder='"By me bread"')
+          textarea(name='desc', placeholder='"Buy me bread"')
     .actions
       .ui.cancel.button Cancel
       .ui.primary.button(@click='add_item') Add
