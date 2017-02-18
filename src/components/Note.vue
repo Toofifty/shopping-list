@@ -1,14 +1,14 @@
 <template lang="pug">
-  .container.noselect(:id="'item-card-' + id", :class="(this.item.done ? 'done' : '') + (this.item.deleted ? ' deleted' : '')")
+  .container.noselect(:id="'note-card-' + id", :class="(this.note.done ? 'done' : '') + (this.note.deleted ? ' deleted' : '')")
     .option.left
-      i.checkmark.icon
+      i.write.icon
     .option.right(:id="'ro-card-' + id")
       i.trash.outline.icon
     .card
       .main
-        h1(:class="item.desc ? 'full-height' : ''") {{ item.label }}
+        h1(:class="note.desc ? 'full-height' : ''") {{ note.label }}
         p.short {{ get_short_desc() }}
-        p.long {{ item.desc }}
+        p.long {{ note.desc }}
 </template>
 
 <script>
@@ -21,7 +21,7 @@ const colors = {
 }
 
 export default {
-  props: ['id', 'item', 'db', 'delete-lock'],
+  props: ['id', 'note', 'db', 'delete-lock'],
   data () {
     return {
       expanded: false,
@@ -29,21 +29,21 @@ export default {
     }
   },
   mounted () {
-    if (this.item && this.item.deleted) {
-      // Clear items from the database if they are
+    if (this.note && this.note.deleted) {
+      // Clear notes from the database if they are
       // marked to be deleted. Prevents weird visual
-      // errors when removing items as soon as
+      // errors when removing notes as soon as
       // they're deleted
       this.db.child(this.id).remove()
-      console.log('pushing dead item ' + this.id)
+      console.log('pushing dead note ' + this.id)
 
-      // No use initializing a deleted item.
+      // No use initializing a deleted note.
       return
     }
 
-    console.log('initializing item ' + this.id)
+    console.log('initializing note ' + this.id)
 
-    this.$container  = $('#item-card-' + this.id)
+    this.$container  = $('#note-card-' + this.id)
     this.$card       = this.$container.children('.card')
     this.$card_main  = this.$card.children('.main')
     this.$opt_left   = this.$container.children('.option.left')
@@ -67,14 +67,14 @@ export default {
       // didn't mean to drag the card
       if (dist < 15 && dist > -15) return
 
-      // Don't allow right swipes if the item
+      // Don't allow right swipes if the note
       // is already done
-      if (dist > 0 && this.item.done) return
+      if (dist > 0 && this.note.done) return
 
       this.dragging = true
       if (dist > 200 || xdiff > ($(window).width() - 5)) {
         dist = 200
-        this.done()
+        this.edit()
         end_drag()
         return
       } else if (dist < -200 || xdiff < 5) {
@@ -88,7 +88,7 @@ export default {
         this.$opt_left.css('width', (100 + dist / 2) + 'px')
         this.$card.css('margin-left', dist + 'px')
       } else {
-        if (this.item.done) {
+        if (this.note.done) {
           this.$opt_left.css('left', dist + 'px')
         } else {
             this.$card.css('margin-left', dist + 'px')
@@ -128,7 +128,7 @@ export default {
 
     setTimeout(() => {
       this.$container.removeClass('preanim')
-        .css('border-bottom-color', colors[this.item.by.color])
+        .css('border-bottom-color', colors[this.note.by.color])
     }, 200)
 
     this.$container.on('click tap', (e) => {
@@ -156,34 +156,31 @@ export default {
   },
   methods: {
     has_long_desc () {
-      return this.item.desc && this.item.desc.length > 35
+      return this.note.desc && this.note.desc.length > 35
     },
     get_short_desc () {
       if (this.expanded)
-        return this.item.desc
-      if (this.item.desc === '')
+        return this.note.desc
+      if (this.note.desc === '')
         return ''
       if (this.has_long_desc())
-        return this.item.desc.substr(0, 35) + '...'
-      return this.item.desc
+        return this.note.desc.substr(0, 35) + '...'
+      return this.note.desc
     },
-    done () {
-      console.log('done!')
-      this.item.done = true
-      this.$container.addClass('done')
+    edit () {
+      console.log('edit!')
       this.$opt_left.css('transition', '0.5s')
-      this.db.child(this.id).update(this.item)
+      
     },
     trash () {
-      if (this.deleteLock.locked || this.item.deleted) return
+      if (this.deleteLock.locked || this.note.deleted) return
       this.deleteLock.locked = true
       console.log('trashed!')
-      this.item.done = false
-      this.item.deleted = true
-      this.db.child(this.id).update(this.item)
+      this.note.deleted = true
+      this.db.child(this.id).update(this.note)
       this.$container.addClass('deleted')
       setTimeout(() => {
-        // this.db.ref('items/' + this.id).remove()
+        // this.db.ref('notes/' + this.id).remove()
         this.deleteLock.locked = false
       }, 1000)
     }
@@ -297,7 +294,7 @@ $tabshadow: inset 0 -8px 0 rgba(0, 0, 0, 0.1);
     }
     &.left {
       color: white;
-      background: $apple;
+      background: $aoi;
       box-shadow: $tabshadow;
       left: 0;
     }
@@ -310,27 +307,6 @@ $tabshadow: inset 0 -8px 0 rgba(0, 0, 0, 0.1);
 
     i {
       text-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  &.done {
-    .card {
-      background: #EEE;
-      color: #CCC;
-      h1, p {
-        text-decoration: line-through;
-        color: white;
-      }
-
-      .main {
-        margin-left: 80px;
-      }
-    }
-
-    .left {
-      background: #EEE;
-      z-index: 2;
-      box-shadow: none;
     }
   }
 }

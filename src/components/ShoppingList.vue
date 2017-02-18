@@ -1,12 +1,12 @@
 <template lang="pug">
-  #list-container.ui.tab.top.attached.loading
+  #shopping-list-container.ui.tab.top.attached.loading
     #empty-list.ui.container(:class='has_items ? "" : "shown"')
       h1 there's nothing here :o
     ul
-      shopping-item(v-for='(item, id) in items', :item='item', :id='id', :db='db', :delete-lock='delete_lock')
+      shopping-item(v-for='(item, id) in items', :item='item', :id='id', :db='db_items', :delete-lock='delete_lock')
     button.circular.ui.icon.button.massive.primary(@click='show_add')
       i.icon.plus
-    add-shopping-item#add-item(:db='db')
+    add-shopping-item#add-item(:db='db_items')
 </template>
 
 <script>
@@ -29,7 +29,7 @@ export default {
     if (true) {
       this.db_items.on('value', (v) => {
         this.items = v.val()
-        $('#list-container').removeClass('loading')
+        $('#shopping-list-container').removeClass('loading')
       })
     } else {
       // Test (local) mode
@@ -96,7 +96,7 @@ export default {
         }
       }
       setTimeout(() => {
-        $('#list-container').removeClass('loading')
+        $('#shopping-list-container').removeClass('loading')
       }, 500)
     }
   },
@@ -121,7 +121,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#list-container {
+#shopping-list-container {
   padding: 0;
   margin: 0;
   max-height: calc(100vh - 71px);
@@ -158,8 +158,32 @@ button.circular.ui.icon.button {
   background-color: #4ECDC4;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
 
+  i {
+    animation: button-spin-in-left 1s;
+    text-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
   &:active {
     background-color: #C7F464;
+  }
+}
+
+@keyframes button-spin-in-left {
+  0% {
+    transform: rotate(0deg);
+    text-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+  }
+  10% {
+    transform: rotate(0deg);
+    text-shadow: 0 0px 0 rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    transform: rotate(-360deg);
+    text-shadow: 0 0px 0 rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    transform: rotate(-360deg);
+    text-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
   }
 }
 </style>

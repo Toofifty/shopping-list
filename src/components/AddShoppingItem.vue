@@ -1,5 +1,5 @@
 <template lang="pug">
-  .add-item.ui.modal
+  .add-item.ui.modal.segment
     .header New Item
     .content
       form.ui.form
@@ -20,23 +20,26 @@ export default {
   methods: {
     add_item () {
       let item = {}
-      item.label = $('input[name="label"]').val()
+      item.label = $('.add-item input[name="label"]').val()
 
       if (item.label === '') return false
 
-      item.desc  = $('textarea[name="desc"]').val()
+      item.desc  = $('.add-item textarea[name="desc"]').val()
       item.date  = new Date().toString()
       item.deleted = item.done = false
       item.by = {
         name: 'Matho',
         color: 3
       }
-      let k = this.db.ref('items/').push().key
+      let k = this.db.push().key
       let update = {}
       update[k] = item
-      this.db.ref('items/').update(update, () => {
-        $('.add-item.modal').modal('hide')
+      $('.add-item.modal').addClass('loading')
+      this.db.update(update, () => {
+        $('.add-item.modal').modal('hide').removeClass('loading')
       })
+      $('.add-item input[name="label"]').val('')
+      $('.add-item textarea[name="desc"]').val('')
     }
   }
 }

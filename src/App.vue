@@ -11,7 +11,8 @@
         i.setting.icon
         | Settings
     shopping-list.active(data-tab='shop', :db='db')
-    .ui.tab.top.attached(data-tab='note')
+    notes-list(data-tab='note', :db='db')
+    .ui.tab.top.attached(data-tab='settings')
       p Cats
       p Aren't
       p Cool
@@ -19,6 +20,7 @@
 
 <script>
 import ShoppingList from './components/ShoppingList.vue'
+import NotesList from './components/NotesList.vue'
 import firebase from 'firebase'
 
 // Initialize the Firebase connection
@@ -67,7 +69,8 @@ const db = fb_app.database()
 export default {
   name: 'app',
   components: {
-    ShoppingList
+    ShoppingList,
+    NotesList
   },
   mounted() {
     $('.menu .item').tab()
