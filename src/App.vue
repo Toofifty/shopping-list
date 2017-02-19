@@ -3,24 +3,22 @@
     .ui.three.item.labeled.icon.menu.bottom.fixed
       a.item.active(data-tab='shop')
         i.shopping.basket.icon
-        | Shopping List
+        //- | Shopping List
       a.item(data-tab='note')
         i.book.icon
-        | Notes
+        //- | Notes
       a.item(data-tab='settings')
         i.setting.icon
-        | Settings
-    shopping-list.active(data-tab='shop', :db='db')
+        //- | Settings
+    items-list.active(data-tab='shop', :db='db')
     notes-list(data-tab='note', :db='db')
-    .ui.tab.top.attached(data-tab='settings')
-      p Cats
-      p Aren't
-      p Cool
+    settings-list(data-tab='settings', :db='db')
 </template>
 
 <script>
-import ShoppingList from './components/ShoppingList.vue'
+import ItemsList from './components/ItemsList.vue'
 import NotesList from './components/NotesList.vue'
+import SettingsList from './components/SettingsList.vue'
 import firebase from 'firebase'
 
 // Initialize the Firebase connection
@@ -66,11 +64,16 @@ const db = fb_app.database()
 //
 // db_items.update(data)
 
+db.ref('users/').on('value', (v) => {
+  window.shopping_list_users = v.val()
+})
+
 export default {
   name: 'app',
   components: {
-    ShoppingList,
-    NotesList
+    ItemsList,
+    NotesList,
+    SettingsList
   },
   mounted() {
     $('.menu .item').tab()
@@ -87,9 +90,7 @@ export default {
 
 // palette http://www.colourlovers.com/palette/1930/cheer_up_emo_kid
 
-$aoi: #69D2E7;
-$pondwater: #A7DBD8;
-$goldfish: #F38630;
+@import './assets/_variables.scss';
 
 body {
   background: #556270 !important;
@@ -121,15 +122,19 @@ a {
   color: #42b983;
 }
 
-.ui.icon.menu a.item.active,
-.ui.menu .item.active > i.icon {
-  color: $aoi;
-}
-.ui.icon.menu a.item,
-.ui.menu .item > i.icon {
-  color: $pondwater;
-  &:hover {
-    color: $pondwater;
+.ui.icon.menu a.item {
+  color: $slate;
+  &:hover, &:active {
+    color: $ocean;
   }
 }
+
+// .ui.icon.menu a.item.active,
+// .ui.menu .item.active > i.icon {
+//   color: #f0f;
+// }
+// .ui.icon.menu a.item,
+// .ui.menu .item > i.icon {
+//   color: $pondwater;
+// }
 </style>

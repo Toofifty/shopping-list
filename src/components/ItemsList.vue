@@ -1,20 +1,25 @@
-<template lang="pug">
-  #shopping-list-container.ui.tab.top.attached.loading
+<template lang='pug'>
+  #items-list-container.ui.tab.top.attached.loading
     #empty-list.ui.container(:class='has_items ? "" : "shown"')
       h1 there's nothing here :o
     ul
-      shopping-item(v-for='(item, id) in items', :item='item', :id='id', :db='db_items', :delete-lock='delete_lock')
+      item-card(v-for='(item, id) in items', :item='item', :id='id', :db='db_items', :delete-lock='delete_lock')
+    .button-clear
     button.circular.ui.icon.button.massive.primary(@click='show_add')
       i.icon.plus
-    add-shopping-item#add-item(:db='db_items')
+    add-item#add-item(:db='db_items')
 </template>
 
 <script>
-import ShoppingItem from './ShoppingItem.vue'
-import AddShoppingItem from './AddShoppingItem.vue'
+import ItemCard from './ItemCard.vue'
+import AddItem from './AddItem.vue'
 
 export default {
   props: ['db'],
+  components: {
+    ItemCard,
+    AddItem
+  },
   data () {
     return {
       items: [],
@@ -26,10 +31,10 @@ export default {
     }
   },
   mounted () {
-    if (true) {
+    if (false) {
       this.db_items.on('value', (v) => {
         this.items = v.val()
-        $('#shopping-list-container').removeClass('loading')
+        $('#items-list-container').removeClass('loading')
       })
     } else {
       // Test (local) mode
@@ -41,17 +46,17 @@ export default {
           deleted: false,
           by: {
             name: "Matho",
-            color: "4"
+            color: "1"
           }
         },
-        "bread-14231": {
+        "bread-142315": {
           label: "bread-1",
-          desc: "Buy some bread",
+          desc: "Buy some bread with a very long and unnecessary description, because I need to test how such a description would look both functionally and aesthetically",
           done: false,
           deleted: false,
           by: {
             name: "Matho",
-            color: "4"
+            color: "2"
           }
         },
         "bread-14232": {
@@ -61,7 +66,7 @@ export default {
           deleted: false,
           by: {
             name: "Matho",
-            color: "4"
+            color: "3"
           }
         },
         "bread-14231": {
@@ -81,7 +86,7 @@ export default {
           deleted: false,
           by: {
             name: "Matho",
-            color: "4"
+            color: "5"
           }
         },
         "bread-142321": {
@@ -91,18 +96,14 @@ export default {
           deleted: false,
           by: {
             name: "Matho",
-            color: "4"
+            color: "2"
           }
         }
       }
       setTimeout(() => {
-        $('#shopping-list-container').removeClass('loading')
+        $('#items-list-container').removeClass('loading')
       }, 500)
     }
-  },
-  components: {
-    ShoppingItem,
-    AddShoppingItem
   },
   computed: {
     has_items () {
@@ -115,75 +116,74 @@ export default {
   methods: {
     show_add () {
       $('#add-item').modal('show')
+      $('#items-list-container button').addClass('hidden')
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-#shopping-list-container {
+<style lang='scss' scoped>
+@import '../assets/_variables.scss';
+
+#items-list-container {
   padding: 0;
   margin: 0;
   max-height: calc(100vh - 71px);
   overflow-y: scroll;
   overflow-x: hidden;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
-  ul {
-    margin: 0;
-  }
+
+  ul { margin: 0; }
+  .button-clear { height: 98px; }
 }
+
 #empty-list {
   position: absolute;
   left: 0;
   top: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.2);
-  margin: 0;
   width: 100%;
   padding: 5%;
   margin: 5%;
-  color: #556270;
+  color: $slate;
   border-radius: 4px;
   opacity: 0;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
-  &.shown {
-    opacity: 1;
-  }
+
+  &.shown { opacity: 1; }
 }
+
 button.circular.ui.icon.button {
-  position: absolute;
+  position: fixed;
   bottom: 92px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #4ECDC4;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+  background-color: $ocean;
+  box-shadow: $hard-shadow;
 
   i {
     animation: button-spin-in-left 1s;
-    text-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+    text-shadow: $hard-shadow;
   }
 
-  &:active {
-    background-color: #C7F464;
-  }
+  &:active { background-color: $apple; }
 }
 
 @keyframes button-spin-in-left {
   0% {
-    transform: rotate(0deg);
-    text-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+    text-shadow: $hard-shadow;
   }
   10% {
     transform: rotate(0deg);
-    text-shadow: 0 0px 0 rgba(0, 0, 0, 0.1);
+    text-shadow: $no-shadow;
   }
   50% {
     transform: rotate(-360deg);
-    text-shadow: 0 0px 0 rgba(0, 0, 0, 0.1);
+    text-shadow: $no-shadow;
   }
   100% {
     transform: rotate(-360deg);
-    text-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+    text-shadow: $hard-shadow;
   }
 }
 </style>

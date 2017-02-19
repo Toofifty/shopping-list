@@ -10,7 +10,7 @@
           label Description
           textarea(name='desc', placeholder='"Buy me bread"')
     .actions
-      .ui.cancel.button Cancel
+      .ui.cancel.button(@click='cancel') Cancel
       .ui.primary.button(@click='add_item') Add
 </template>
 
@@ -37,9 +37,14 @@ export default {
       $('.add-item.modal').addClass('loading')
       this.db.update(update, () => {
         $('.add-item.modal').modal('hide').removeClass('loading')
+        $('#items-list-container button').removeClass('hidden')
       })
       $('.add-item input[name="label"]').val('')
       $('.add-item textarea[name="desc"]').val('')
+    },
+    cancel () {
+      $('#items-list-container button').removeClass('hidden')
+      return true
     }
   }
 }

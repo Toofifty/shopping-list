@@ -1,0 +1,38 @@
+$card-bg: #FFF;
+$card-lgray: #EEE;
+$card-gray: #CCC;
+
+$aoi: #69D2E7;
+$pondwater: #A7DBD8;
+$ocean: #4ECDC4;
+$goldfish: #F38630;
+$apple: #C7F464;
+$cherry: #FF6B6B;
+$slate: #556270;
+
+$tab-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.1);
+$hard-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+$no-shadow: 0 0px 0 rgba(0, 0, 0, 0.1);
+
+$fade-in-anim: fade-in 0.5s;
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    // transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@mixin noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+  cursor: default;
+}
