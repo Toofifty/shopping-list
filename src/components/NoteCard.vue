@@ -3,14 +3,14 @@
     .card
       .main
         h1 {{ note.label }}
-      form.ui.form.extra
-        .editable
-          h6(@click='') {{ note.desc }}
-          .field
-            textarea(:value='note.desc')
+      .comments
+        edit-comment(v-model='desc')
+        p {{ desc }}
 </template>
 
 <script>
+import EditComment from './EditComment.vue'
+
 const colors = {
   1: '#69D2E7',
   2: '#A7DBD8',
@@ -21,26 +21,46 @@ const colors = {
 
 export default {
   props: ['id', 'note', 'db'],
+  components: {
+    EditComment
+  },
   data () {
     return {
+      desc: '',
+      comments: {},
+      by: {}
     }
   },
   mounted () {
     this.$container = $('#note-card-' + this.id)
 
-    this.$container.addClass('bottom-' + this.note.by.color)
-
     this.$card = this.$container.children('.card')
     this.$extra = this.$card.children('form.ui.form.extra')
-  },
-  data () {
-    return {
-      a: []
-    }
-  },
-  computed: {
+
+    this.desc     = this.note.desc
+    this.by       = this.note.by
+    this.comments = this.note.comments
+
+    this.update_by()
   },
   methods: {
+    update_by () {
+      if (!window.localStorage.users) return
+      let users = JSON.parse(window.localStorage.users)
+      this.by = users[this.note.by]
+      this.$card
+        .removeClass('left-1')
+        .removeClass('left-2')
+        .removeClass('left-3')
+        .removeClass('left-4')
+        .removeClass('left-5')
+        .addClass('left-' + this.by.color)
+    },
+    update_note () {
+      this.note.desc = this.desc
+      this.note.comments = this.comments
+      this.db.child(this.id).update(this.note)
+    },
     toggle () {
       console.log('toggle')
       if (this.$container.hasClass('expanded')) {
@@ -65,7 +85,6 @@ export default {
   background: $card-bg;
   color: $goldfish;
   font-size: 1.4em;
-  font-weight: bolder;
   height: 5em;
 
   .expanded {
@@ -82,30 +101,18 @@ export default {
 
     padding: 1em;
 
-    .extra {
-      height: 0;
-      overflow: hidden;
-    }
-
-    h1, h6 {
-      text-align: left;
-      margin-bottom: 0;
-    }
-
-    h1 { text-transform: lowercase; }
-
-    h6 {
-      color: $card-gray;
-      font-size: 0.8em;
+    h1 {
+      text-transform: lowercase;
       font-weight: lighter;
+      text-align: left;
     }
   }
 }
 
-[class*='bottom-'] { border-bottom: 4px solid $card-gray; }
-.bottom-1 { border-bottom-color: #69D2E7; }
-.bottom-2 { border-bottom-color: #A7DBD8; }
-.bottom-3 { border-bottom-color: #E0E4CC; }
-.bottom-4 { border-bottom-color: #F38630; }
-.bottom-5 { border-bottom-color: #FA6900; }
+[class*='left-'] { border-left: 4px solid $card-gray; }
+.left-1 { border-left-color: #69D2E7; }
+.left-2 { border-left-color: #A7DBD8; }
+.left-3 { border-left-color: #E0E4CC; }
+.left-4 { border-left-color: #F38630; }
+.left-5 { border-left-color: #FA6900; }
 </style>

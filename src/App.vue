@@ -10,9 +10,9 @@
       a.item(data-tab='settings')
         i.setting.icon
         //- | Settings
-    items-list.active(data-tab='shop', :db='db')
-    notes-list(data-tab='note', :db='db')
-    settings-list(data-tab='settings', :db='db')
+    items-list.active(data-tab='shop', :db='db', :uservalid='uservalid')
+    notes-list(data-tab='note', :db='db', :uservalid='uservalid')
+    settings-list(data-tab='settings', :db='db', @validchange='set_valid')
 </template>
 
 <script>
@@ -64,8 +64,9 @@ const db = fb_app.database()
 //
 // db_items.update(data)
 
+window.local_user_valid = false
 db.ref('users/').on('value', (v) => {
-  window.shopping_list_users = v.val()
+  window.localStorage.users = JSON.stringify(v.val())
 })
 
 export default {
@@ -80,7 +81,14 @@ export default {
   },
   data () {
     return {
-      db: db
+      db: db,
+      uservalid: false
+    }
+  },
+  methods: {
+    set_valid (value) {
+      this.uservalid = value
+      console.log('change valid to ' + this.uservalid)
     }
   }
 }

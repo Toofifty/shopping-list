@@ -27,10 +27,7 @@ export default {
       item.desc  = $('.add-item textarea[name="desc"]').val()
       item.date  = new Date().toString()
       item.deleted = item.done = false
-      item.by = {
-        name: 'Matho',
-        color: 3
-      }
+      item.by = window.localStorage.user_passcode
       let k = this.db.push().key
       let update = {}
       update[k] = item

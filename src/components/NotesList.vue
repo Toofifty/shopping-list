@@ -5,9 +5,9 @@
     ul
       note-card(v-for='(note, id) in notes', :note='note', :id='id', :db='db_notes')
     .button-clear
-    button.circular.ui.icon.button.massive.primary(@click='show_add')
+    button.circular.ui.icon.button.massive.primary(v-if='uservalid', @click='show_add')
       i.icon.plus
-    add-note#add-note(:db='db_notes', type='New')
+    add-note#add-note(:db='db_notes')
 </template>
 
 <script>
@@ -15,7 +15,7 @@ import NoteCard from './NoteCard.vue'
 import AddNote from './AddNote.vue'
 
 export default {
-  props: ['db'],
+  props: ['db', 'uservalid'],
   components: {
     NoteCard,
     AddNote
@@ -23,11 +23,11 @@ export default {
   data () {
     return {
       notes: [],
-      db_notes: this.db.ref('notes/')
+      db_notes: this.db.ref('notes2/')
     }
   },
   mounted () {
-    if (false) {
+    if (true) {
       this.db_notes.on('value', (v) => {
         this.notes = v.val()
         $('#notes-list-container').removeClass('loading')
@@ -100,7 +100,7 @@ export default {
 #notes-list-container {
   padding: 0;
   margin: 0;
-  max-height: calc(100vh - 71px);
+  max-height: calc(100vh - 56px);
   overflow-y: scroll;
   overflow-x: hidden;
 
@@ -127,7 +127,7 @@ export default {
 
 button.circular.ui.icon.button {
   position: fixed;
-  bottom: 92px;
+  bottom: 77px;
   left: 50%;
   transform: translateX(-50%);
   background-color: $ocean;

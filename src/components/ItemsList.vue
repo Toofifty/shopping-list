@@ -5,7 +5,7 @@
     ul
       item-card(v-for='(item, id) in items', :item='item', :id='id', :db='db_items', :delete-lock='delete_lock')
     .button-clear
-    button.circular.ui.icon.button.massive.primary(@click='show_add')
+    button.circular.ui.icon.button.massive.primary(v-if='uservalid', @click='show_add')
       i.icon.plus
     add-item#add-item(:db='db_items')
 </template>
@@ -15,7 +15,7 @@ import ItemCard from './ItemCard.vue'
 import AddItem from './AddItem.vue'
 
 export default {
-  props: ['db'],
+  props: ['db', 'uservalid'],
   components: {
     ItemCard,
     AddItem
@@ -23,7 +23,7 @@ export default {
   data () {
     return {
       items: [],
-      db_items: this.db.ref('items/'),
+      db_items: this.db.ref('items2/'),
       // used to prevent multiple deletes from one action
       delete_lock: {
         locked: false
@@ -31,7 +31,7 @@ export default {
     }
   },
   mounted () {
-    if (false) {
+    if (true) {
       this.db_items.on('value', (v) => {
         this.items = v.val()
         $('#items-list-container').removeClass('loading')
@@ -44,60 +44,42 @@ export default {
           desc: "Buy some bread",
           done: false,
           deleted: false,
-          by: {
-            name: "Matho",
-            color: "1"
-          }
+          by: 'izdwvz9w'
         },
         "bread-142315": {
           label: "bread-1",
           desc: "Buy some bread with a very long and unnecessary description, because I need to test how such a description would look both functionally and aesthetically",
           done: false,
           deleted: false,
-          by: {
-            name: "Matho",
-            color: "2"
-          }
+          by: 'izdwvz9w'
         },
         "bread-14232": {
           label: "bread-2",
           desc: "Buy some bread",
           done: false,
           deleted: false,
-          by: {
-            name: "Matho",
-            color: "3"
-          }
+          by: 'izdwvz9w'
         },
         "bread-14231": {
           label: "bread-3",
           desc: "Buy some bread",
           done: false,
           deleted: false,
-          by: {
-            name: "Matho",
-            color: "4"
-          }
+          by: 'izccbw9v'
         },
         "bread-142311": {
           label: "bread-4",
           desc: "Buy some bread",
           done: false,
           deleted: false,
-          by: {
-            name: "Matho",
-            color: "5"
-          }
+          by: 'izdwvz9w'
         },
         "bread-142321": {
           label: "bread-5",
           desc: "Buy some bread",
           done: false,
           deleted: false,
-          by: {
-            name: "Matho",
-            color: "2"
-          }
+          by: 'izccbw9v'
         }
       }
       setTimeout(() => {
@@ -128,7 +110,7 @@ export default {
 #items-list-container {
   padding: 0;
   margin: 0;
-  max-height: calc(100vh - 71px);
+  max-height: calc(100vh - 56px);
   overflow-y: scroll;
   overflow-x: hidden;
 
@@ -155,7 +137,7 @@ export default {
 
 button.circular.ui.icon.button {
   position: fixed;
-  bottom: 92px;
+  bottom: 77px;
   left: 50%;
   transform: translateX(-50%);
   background-color: $ocean;

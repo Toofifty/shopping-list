@@ -1,6 +1,6 @@
 <template lang="pug">
   .add-note.ui.modal.segment
-    .header {{ type }} note
+    .header New note
     .content
       form.ui.form
         .field
@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  props: ['db', 'title', 'content', 'type'],
+  props: ['db', 'title', 'content'],
   methods: {
     add_note () {
       let note = {}
@@ -27,10 +27,8 @@ export default {
       note.desc  = $('.add-note textarea[name="desc"]').val()
       note.date  = new Date().toString()
       note.deleted = note.done = false
-      note.by = {
-        name: 'Matho',
-        color: 3
-      }
+      note.by = window.localStorage.user_passcode
+      note.comments = {}
       let k = this.db.push().key
       let update = {}
       update[k] = note

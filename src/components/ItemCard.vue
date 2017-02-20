@@ -26,7 +26,8 @@ export default {
   data () {
     return {
       expanded: false,
-      dragging: false
+      dragging: false,
+      by: {}
     }
   },
   mounted () {
@@ -47,8 +48,6 @@ export default {
     this.$card_main  = this.$card.children('.main')
     this.$opt_left   = this.$container.children('.option.left')
     this.$opt_right  = this.$container.children('.option.right')
-
-    this.$card.addClass('left-' + this.item.by.color)
 
     let xval = 0
 
@@ -135,6 +134,8 @@ export default {
         }
       }
     })
+
+    this.update_by()
   },
   data () {
     return {
@@ -147,6 +148,18 @@ export default {
     }
   },
   methods: {
+    update_by () {
+      if (!window.localStorage.users) return
+      let users = JSON.parse(window.localStorage.users)
+      this.by = users[this.item.by]
+      this.$card
+        .removeClass('left-1')
+        .removeClass('left-2')
+        .removeClass('left-3')
+        .removeClass('left-4')
+        .removeClass('left-5')
+        .addClass('left-' + this.by.color)
+    },
     has_long_desc () {
       return this.item.desc && this.item.desc.length > 35
     },
