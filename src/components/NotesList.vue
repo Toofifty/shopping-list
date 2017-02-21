@@ -1,9 +1,9 @@
 <template lang="pug">
   #notes-list-container.ui.tab.top.attached.loading
-    #empty-list.ui.container(:class='has_notes ? "" : "shown"')
-      h1 there's nothing here :o
     ul
       note-card(v-for='(note, id) in notes', :note='note', :id='id', :db='db_notes')
+    #empty-list.ui.container(:class='has_notes ? "" : "shown"')
+      h1 there's nothing here :o
     .button-clear
     button.circular.ui.icon.button.massive.primary(v-if='uservalid', @click='show_add')
       i.icon.plus
@@ -39,17 +39,11 @@ export default {
           label: "note 1",
           desc: "This is a note",
           deleted: false,
-          by: {
-            name: "Matho",
-            color: "2"
-          },
+          by: 'izccbw9v',
           comments: {
             "comment-1": {
               content: "This is a comment",
-              by: {
-                name: "Matho",
-                color: "3"
-              }
+              by: 'izccbw9v'
             }
           }
         },
@@ -57,18 +51,16 @@ export default {
           label: "note 2",
           desc: "This is another note",
           deleted: false,
-          by: {
-            name: "Matho",
-            color: "4"
-          },
+          by: 'izccbw9v',
           comments: {
             "comment-1": {
               content: "This is a comment",
-              by: {
-                name: "Matho",
-                color: "3"
+              by: 'izccbw9v'
+            },
+              "comment-2": {
+                content: "This is a second comment I guess?",
+                by: 'izdwvz9w'
               }
-            }
           }
         }
       }
@@ -121,6 +113,7 @@ export default {
   border-radius: 4px;
   opacity: 0;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+  z-index: -1;
 
   &.shown { opacity: 1; }
 }

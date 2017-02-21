@@ -92,8 +92,6 @@ export default {
           phone: this.phone
         }
         this.db.ref('users/' + this.passcode).update(data)
-      } else {
-        console.log('invalid.')
       }
     },
     load_id (e) {

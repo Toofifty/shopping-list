@@ -88,7 +88,6 @@ export default {
   methods: {
     set_valid (value) {
       this.uservalid = value
-      console.log('change valid to ' + this.uservalid)
     }
   }
 }

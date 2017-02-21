@@ -1,6 +1,6 @@
 <template lang='pug'>
-  .edit-comment(:class='by ? "left-" + by.color : ""')
-    input(v-model='value', :value='value', @change='update')
+  .edit-comment(:class='by ? "left-" + by.color : ""', v-if='value !== ""')
+    input(:value='value', @input='update($event.target.value)', :disabled='!can_edit')
 </template>
 
 <script>
@@ -9,9 +9,14 @@ export default {
   mounted () {
     console.log(this.value)
   },
+  computed: {
+    can_edit () {
+      return true
+    }
+  },
   methods: {
-    update () {
-      this.$emit('update', this.value)
+    update (value) {
+      this.$emit('input', value)
     }
   }
 }
@@ -21,22 +26,23 @@ export default {
 @import '../assets/_variables.scss';
 
 .edit-comment {
-  background: $card-lgray;
-
   input {
-    width: 100%;
+    width: calc(100% - 1em);
     height: 100%;
     font-size: 0.7em;
     color: $card-gray;
     padding: 0.5em;
+    margin: 0 0.5em;
     border: none;
     border-bottom: 1px solid transparent;
     transition: 0.25s;
+    background: transparent;
 
     &:focus {
       outline: none;
       color: $ocean;
       border-bottom-color: $ocean;
+      box-shadow: 0 1px 5px $card-lgray;
     }
   }
 }

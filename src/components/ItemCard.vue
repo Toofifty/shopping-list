@@ -173,7 +173,6 @@ export default {
       return this.item.desc
     },
     done () {
-      console.log('done!')
       this.item.done = true
       this.$container.addClass('done')
       this.$opt_left.css('transition', '0.5s')
@@ -182,7 +181,6 @@ export default {
     trash () {
       if (this.deleteLock.locked || this.item.deleted) return
       this.deleteLock.locked = true
-      console.log('trashed!')
       this.item.done = false
       this.item.deleted = true
       this.db.child(this.id).update(this.item)
